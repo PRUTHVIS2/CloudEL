@@ -1,0 +1,30 @@
+import { DynamoDBClient, DeleteItemCommand } from "@aws-sdk/client-dynamodb"; 
+ 
+const client = new DynamoDBClient({ region: "us-east-1" }); 
+ 
+export const handler = async (event) => { 
+  try { 
+    const body = JSON.parse(event.body); 
+ 
+    await client.send(new DeleteItemCommand({ 
+      TableName: "Expenses", 
+      Key: { id: { S: body.id } } 
+    })); 
+ 
+    return { 
+      statusCode: 200, 
+      headers: { 
+        "Access-Control-Allow-Origin": "*", 
+        "Access-Control-Allow-Headers": "Content-Type", 
+        "Access-Control-Allow-Methods": "POST,GET,DELETE,OPTIONS" 
+      }, 
+      body: JSON.stringify({ message: "Expense deleted!" }) 
+    }; 
+  } catch (err) { 
+    return { 
+      statusCode: 500, 
+      headers: { "Access-Control-Allow-Origin": "*" }, 
+      body: JSON.stringify({ error: err.message }) 
+    }; 
+  } 
+}; 
