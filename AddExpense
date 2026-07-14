@@ -1,0 +1,48 @@
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+
+const client = new DynamoDBClient({ region: "ap-south-1" });
+
+export const handler = async (event) => {
+  try {
+    const body = JSON.parse(event.body);
+
+    const item = {
+      id: { S: Date.now().toString() },
+      title: { S: body.title || "" },
+      amount: { N: body.amount.toString() },
+      category: { S: body.category || "Other" },
+      date: { S: body.date || "" },
+      note: { S: body.note || "" },
+      userId: { S: body.userId || "guest" }
+    };
+
+    await client.send(
+      new PutItemCommand({
+        TableName: "Expenses",
+        Item: item
+      })
+    );
+
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "POST,GET,DELETE,OPTIONS"
+      },
+      body: JSON.stringify({
+        message: "Expense added successfully!"
+      })
+    };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      },
+      body: JSON.stringify({
+        error: err.message
+      })
+    };
+  }
+};
