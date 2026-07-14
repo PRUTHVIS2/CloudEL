@@ -1,0 +1,41 @@
+import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
+
+const client = new DynamoDBClient({ region: "ap-south-1" });
+
+export const handler = async (event) => {
+  try {
+    const userId = event.queryStringParameters?.userId || "guest";
+
+    const result = await client.send(new ScanCommand({
+      TableName: "Expenses",
+      FilterExpression: "userId = :uid",
+      ExpressionAttributeValues: { ":uid": { S: userId } }
+    }));
+
+    const items = (result.Items || []).map(item => ({
+      id:       item.id?.S       || "",
+      title:    item.title?.S    || "",
+      amount:   item.amount?.N   || "0",
+      category: item.category?.S || "Other",
+      date:     item.date?.S     || "",
+      note:     item.note?.S     || "",
+      userId:   item.userId?.S   || ""
+    }));
+
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "POST,GET,DELETE,OPTIONS"
+      },
+      body: JSON.stringify(items)
+    };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      headers: { "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ error: err.message })
+    };
+  }
+};
