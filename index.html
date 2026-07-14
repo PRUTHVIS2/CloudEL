@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartSpend — Serverless Expense Tracker</title>
+    <meta name="description"
+        content="SmartSpend is a serverless expense tracker built with AWS. Track, manage, and visualize your spending with a stunning modern interface." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Animated background orbs -->
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toast-container"></div>
+
+    <!-- ===== AUTH SCREEN ===== -->
+    <div class="auth-screen" id="auth-screen">
+        <div class="auth-container">
+            <div class="auth-brand">
+                <div class="auth-logo-icon">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
+                    </svg>
+                </div>
+                <h1 class="auth-brand-name">SmartSpend</h1>
+                <p class="auth-brand-sub">Serverless Expense Tracker · AWS</p>
+            </div>
+
+            <!-- Login Form -->
+            <div class="auth-card glass-card" id="login-card">
+                <h2 class="auth-title">Welcome Back</h2>
+                <p class="auth-subtitle">Sign in to your account</p>
+                <form id="login-form" autocomplete="off">
+                    <div class="auth-input-group">
+                        <label for="login-email">Email</label>
+                        <div class="auth-input-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                <polyline points="22,6 12,13 2,6" />
+                            </svg>
+                            <input type="email" id="login-email" placeholder="you@example.com" required>
+                        </div>
+                    </div>
+                    <div class="auth-input-group">
+                        <label for="login-password">Password</label>
+                        <div class="auth-input-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            <input type="password" id="login-password" placeholder="Enter your password" required
+                                minlength="4">
+                        </div>
+                    </div>
+                    <button type="submit" class="auth-btn" id="btn-login">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                            <polyline points="10 17 15 12 10 7" />
+                            <line x1="15" y1="12" x2="3" y2="12" />
+                        </svg>
+                        Sign In
+                    </button>
+                </form>
+                <p class="auth-switch">Don't have an account? <a href="#" id="show-signup">Create one</a></p>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="auth-card glass-card" id="signup-card" style="display:none;">
+                <h2 class="auth-title">Create Account</h2>
+                <p class="auth-subtitle">Start tracking your expenses</p>
+                <form id="signup-form" autocomplete="off">
+                    <div class="auth-input-group">
+                        <label for="signup-name">Full Name</label>
+                        <div class="auth-input-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            <input type="text" id="signup-name" placeholder="John Doe" required minlength="2">
+                        </div>
+                    </div>
+                    <div class="auth-input-group">
+                        <label for="signup-email">Email</label>
+                        <div class="auth-input-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                <polyline points="22,6 12,13 2,6" />
+                            </svg>
+                            <input type="email" id="signup-email" placeholder="you@example.com" required>
+                        </div>
+                    </div>
+                    <div class="auth-input-group">
+                        <label for="signup-password">Password</label>
+                        <div class="auth-input-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            <input type="password" id="signup-password" placeholder="Min 4 characters" required
+                                minlength="4">
+                        </div>
+                    </div>
+                    <div class="auth-input-group">
+                        <label for="signup-confirm">Confirm Password</label>
+                        <div class="auth-input-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                            <input type="password" id="signup-confirm" placeholder="Re-enter password" required
+                                minlength="4">
+                        </div>
+                    </div>
+                    <button type="submit" class="auth-btn auth-btn-signup" id="btn-signup">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="8.5" cy="7" r="4" />
+                            <line x1="20" y1="8" x2="20" y2="14" />
+                            <line x1="23" y1="11" x2="17" y2="11" />
+                        </svg>
+                        Create Account
+                    </button>
+                </form>
+                <p class="auth-switch">Already have an account? <a href="#" id="show-login">Sign in</a></p>
+            </div>
+
+            <p class="auth-footer-text">Cloud Computing PBL · 2026</p>
+        </div>
+    </div>
+
+    <!-- App Shell -->
+    <div class="app-shell" id="app-shell" style="display:none;">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-group">
+                    <div class="logo-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                            <path d="M2 17l10 5 10-5" />
+                            <path d="M2 12l10 5 10-5" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="logo-text">SmartSpend</h1>
+                        <span class="logo-badge">AWS Serverless</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-link active" data-page="dashboard" id="nav-dashboard">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7" />
+                        <rect x="14" y="3" width="7" height="7" />
+                        <rect x="14" y="14" width="7" height="7" />
+                        <rect x="3" y="14" width="7" height="7" />
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-link" data-page="add-expense" id="nav-add-expense">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="16" />
+                        <line x1="8" y1="12" x2="16" y2="12" />
+                    </svg>
+                    <span>Add Expense</span>
+                </a>
+                <a href="#" class="nav-link" data-page="analytics" id="nav-analytics">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10" />
+                        <line x1="12" y1="20" x2="12" y2="4" />
+                        <line x1="6" y1="20" x2="6" y2="14" />
+                    </svg>
+                    <span>Analytics</span>
+                </a>
+                <a href="#" class="nav-link" data-page="history" id="nav-history">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span>History</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-link" data-page="settings" id="nav-settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile" id="user-profile">
+                    <div class="user-avatar" id="user-avatar">U</div>
+                    <div class="user-info">
+                        <span class="user-name" id="user-name">User</span>
+                        <span class="user-email" id="user-email">user@mail.com</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="btn-logout">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Mobile Header -->
+        <header class="mobile-header" id="mobile-header">
+            <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="mobile-logo">SmartSpend</div>
+            <div class="mobile-badge">AWS</div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content" id="main-content">
+
+            <!-- ===== DASHBOARD PAGE ===== -->
+            <section class="page active" id="page-dashboard">
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">Welcome, <span id="greeting-name">User</span> 👋</h2>
+                        <p class="page-subtitle">Your financial overview at a glance</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="date-display" id="current-date"></div>
+                    </div>
+                </div>
+
+                <!-- Stat Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-total" id="stat-total">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                                <line x1="12" y1="19" x2="12" y2="23" />
+                                <line x1="8" y1="23" x2="16" y2="23" />
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Expenses</span>
+                            <span class="stat-value" id="total-expenses">₹0</span>
+                        </div>
+                        <div class="stat-trend up" id="total-trend">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                <polyline points="17 6 23 6 23 12" />
+                            </svg>
+                            <span>Tracking</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-month" id="stat-month">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                <line x1="16" y1="2" x2="16" y2="6" />
+                                <line x1="8" y1="2" x2="8" y2="6" />
+                                <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">This Month</span>
+                            <span class="stat-value" id="month-expenses">₹0</span>
+                        </div>
+                        <div class="stat-trend" id="month-trend">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                <polyline points="17 6 23 6 23 12" />
+                            </svg>
+                            <span id="month-trend-text">Active</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-count" id="stat-count">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Transactions</span>
+                            <span class="stat-value" id="total-transactions">0</span>
+                        </div>
+                        <div class="stat-trend" id="count-trend">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                <polyline points="17 6 23 6 23 12" />
+                            </svg>
+                            <span>Active</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-budget" id="stat-budget">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+                                <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+                                <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Budget Left</span>
+                            <span class="stat-value" id="budget-left">₹10,000</span>
+                        </div>
+                        <div class="budget-bar-wrap">
+                            <div class="budget-bar">
+                                <div class="budget-fill" id="budget-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <div class="chart-card glass-card">
+                        <div class="chart-header">
+                            <h3>Spending by Category</h3>
+                        </div>
+                        <div class="donut-chart-container">
+                            <canvas id="category-chart" width="260" height="260"></canvas>
+                            <div class="donut-center" id="donut-center">
+                                <span class="donut-total" id="donut-total">₹0</span>
+                                <span class="donut-label">Total</span>
+                            </div>
+                        </div>
+                        <div class="chart-legend" id="chart-legend"></div>
+                    </div>
+
+                    <div class="chart-card glass-card">
+                        <div class="chart-header">
+                            <h3>Recent Expenses</h3>
+                            <button class="btn-sm btn-outline" id="btn-view-all" onclick="switchPage('history')">View
+                                All</button>
+                        </div>
+                        <div class="recent-list" id="recent-list">
+                            <div class="empty-state-mini">
+                                <p>No expenses yet. Start tracking!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== ADD EXPENSE PAGE ===== -->
+            <section class="page" id="page-add-expense">
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">Add Expense</h2>
+                        <p class="page-subtitle">Record a new transaction</p>
+                    </div>
+                </div>
+
+                <div class="form-layout">
+                    <div class="form-card glass-card">
+                        <form id="expense-form" autocomplete="off">
+                            <div class="form-grid">
+                                <div class="input-group full-width">
+                                    <label for="expense-title">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                        </svg>
+                                        Expense Title
+                                    </label>
+                                    <input type="text" id="expense-title" placeholder="e.g., Coffee at Starbucks"
+                                        required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="expense-amount">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <line x1="12" y1="1" x2="12" y2="23" />
+                                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                        </svg>
+                                        Amount (₹)
+                                    </label>
+                                    <input type="number" id="expense-amount" placeholder="0.00" min="1" step="0.01"
+                                        required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="expense-date">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                            <line x1="16" y1="2" x2="16" y2="6" />
+                                            <line x1="8" y1="2" x2="8" y2="6" />
+                                            <line x1="3" y1="10" x2="21" y2="10" />
+                                        </svg>
+                                        Date
+                                    </label>
+                                    <input type="date" id="expense-date" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="expense-category">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                                            <polyline points="2 17 12 22 22 17" />
+                                            <polyline points="2 12 12 17 22 12" />
+                                        </svg>
+                                        Category
+                                    </label>
+                                    <select id="expense-category" required>
+                                        <option value="" disabled selected>Select category</option>
+                                        <option value="Food">🍔 Food & Dining</option>
+                                        <option value="Travel">✈️ Travel</option>
+                                        <option value="Shopping">🛍️ Shopping</option>
+                                        <option value="Bills">📄 Bills & Utilities</option>
+                                        <option value="Entertainment">🎬 Entertainment</option>
+                                        <option value="Health">🏥 Health</option>
+                                        <option value="Education">📚 Education</option>
+                                        <option value="Other">📦 Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-group full-width">
+                                    <label for="expense-note">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <line x1="17" y1="10" x2="3" y2="10" />
+                                            <line x1="21" y1="6" x2="3" y2="6" />
+                                            <line x1="21" y1="14" x2="3" y2="14" />
+                                            <line x1="17" y1="18" x2="3" y2="18" />
+                                        </svg>
+                                        Note (Optional)
+                                    </label>
+                                    <input type="text" id="expense-note" placeholder="Add a short note...">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-primary" id="btn-add-expense">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="8" x2="12" y2="16" />
+                                    <line x1="8" y1="12" x2="16" y2="12" />
+                                </svg>
+                                Add Expense
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="form-sidebar">
+                        <div class="quick-stats glass-card">
+                            <h3>Quick Stats</h3>
+                            <div class="quick-stat-item">
+                                <span>Today's Spending</span>
+                                <strong id="today-spending">₹0</strong>
+                            </div>
+                            <div class="quick-stat-item">
+                                <span>This Week</span>
+                                <strong id="week-spending">₹0</strong>
+                            </div>
+                            <div class="quick-stat-item">
+                                <span>This Month</span>
+                                <strong id="form-month-spending">₹0</strong>
+                            </div>
+                        </div>
+
+                        <div class="quick-add glass-card">
+                            <h3>Quick Add</h3>
+                            <div class="quick-add-grid">
+                                <button type="button" class="quick-add-btn" data-title="Coffee" data-amount="150"
+                                    data-category="Food">☕ Coffee<span>₹150</span></button>
+                                <button type="button" class="quick-add-btn" data-title="Lunch" data-amount="250"
+                                    data-category="Food">🍱 Lunch<span>₹250</span></button>
+                                <button type="button" class="quick-add-btn" data-title="Auto/Cab" data-amount="100"
+                                    data-category="Travel">🚕 Cab<span>₹100</span></button>
+                                <button type="button" class="quick-add-btn" data-title="Groceries" data-amount="500"
+                                    data-category="Shopping">🛒 Groceries<span>₹500</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== ANALYTICS PAGE ===== -->
+            <section class="page" id="page-analytics">
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">Analytics</h2>
+                        <p class="page-subtitle">Deep dive into your spending patterns</p>
+                    </div>
+                </div>
+
+                <div class="analytics-grid">
+                    <div class="analytics-card glass-card span-2">
+                        <h3>Monthly Spending Trend</h3>
+                        <div class="bar-chart-container">
+                            <canvas id="monthly-chart" width="700" height="280"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card glass-card">
+                        <h3>Top Categories</h3>
+                        <div class="top-categories" id="top-categories">
+                            <div class="empty-state-mini">
+                                <p>No data available</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card glass-card">
+                        <h3>Spending Insights</h3>
+                        <div class="insights-list" id="insights-list">
+                            <div class="insight-item">
+                                <div class="insight-icon">💡</div>
+                                <p>Add expenses to get personalized insights about your spending habits.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card glass-card">
+                        <h3>Daily Average</h3>
+                        <div class="big-number" id="daily-avg">₹0</div>
+                        <p class="analytics-sub">per day this month</p>
+                    </div>
+
+                    <div class="analytics-card glass-card">
+                        <h3>Highest Expense</h3>
+                        <div class="big-number" id="highest-expense">₹0</div>
+                        <p class="analytics-sub" id="highest-expense-name">—</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== HISTORY PAGE ===== -->
+            <section class="page" id="page-history">
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">Expense History</h2>
+                        <p class="page-subtitle">All your recorded transactions</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="search-box">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input type="text" id="search-expenses" placeholder="Search expenses...">
+                        </div>
+                        <select id="filter-category" class="filter-select">
+                            <option value="all">All Categories</option>
+                            <option value="Food">🍔 Food</option>
+                            <option value="Travel">✈️ Travel</option>
+                            <option value="Shopping">🛍️ Shopping</option>
+                            <option value="Bills">📄 Bills</option>
+                            <option value="Entertainment">🎬 Entertainment</option>
+                            <option value="Health">🏥 Health</option>
+                            <option value="Education">📚 Education</option>
+                            <option value="Other">📦 Other</option>
+                        </select>
+                        <button class="btn-export" id="btn-export-csv" title="Export to CSV">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="history-table-wrap glass-card">
+                    <table class="history-table" id="history-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Note</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-tbody">
+                        </tbody>
+                    </table>
+                    <div class="empty-state" id="empty-history">
+                        <div class="empty-icon">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5" opacity="0.4">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                                <line x1="16" y1="13" x2="8" y2="13" />
+                                <line x1="16" y1="17" x2="8" y2="17" />
+                                <polyline points="10 9 9 9 8 9" />
+                            </svg>
+                        </div>
+                        <h3>No Expenses Found</h3>
+                        <p>Start tracking your spending by adding your first expense.</p>
+                        <button class="btn-primary btn-sm" onclick="switchPage('add-expense')">Add Your First
+                            Expense</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== SETTINGS PAGE ===== -->
+            <section class="page" id="page-settings">
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">Settings</h2>
+                        <p class="page-subtitle">Manage your profile and preferences</p>
+                    </div>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="settings-card glass-card">
+                        <div class="settings-card-header">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            <h3>Profile Information</h3>
+                        </div>
+                        <div class="settings-body">
+                            <div class="settings-avatar-row">
+                                <div class="settings-avatar" id="settings-avatar">U</div>
+                                <div>
+                                    <p class="settings-avatar-name" id="settings-display-name">User</p>
+                                    <p class="settings-avatar-email" id="settings-display-email">user@mail.com</p>
+                                    <p class="settings-avatar-joined">Member since <span
+                                            id="settings-joined">2026</span></p>
+                                </div>
+                            </div>
+                            <div class="settings-form-group">
+                                <label for="settings-name">Display Name</label>
+                                <input type="text" id="settings-name" placeholder="Your name">
+                            </div>
+                            <button class="btn-primary btn-sm" id="btn-save-profile">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="settings-card glass-card">
+                        <div class="settings-card-header">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            <h3>Change Password</h3>
+                        </div>
+                        <div class="settings-body">
+                            <div class="settings-form-group">
+                                <label for="settings-current-pw">Current Password</label>
+                                <input type="password" id="settings-current-pw" placeholder="Enter current password">
+                            </div>
+                            <div class="settings-form-group">
+                                <label for="settings-new-pw">New Password</label>
+                                <input type="password" id="settings-new-pw" placeholder="Min 4 characters"
+                                    minlength="4">
+                            </div>
+                            <div class="settings-form-group">
+                                <label for="settings-confirm-pw">Confirm New Password</label>
+                                <input type="password" id="settings-confirm-pw" placeholder="Re-enter new password"
+                                    minlength="4">
+                            </div>
+                            <button class="btn-primary btn-sm" id="btn-change-password">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                                Update Password
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="settings-card glass-card">
+                        <div class="settings-card-header">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="16" x2="12" y2="12" />
+                                <line x1="12" y1="8" x2="12.01" y2="8" />
+                            </svg>
+                            <h3>About</h3>
+                        </div>
+                        <div class="settings-body">
+                            <div class="about-info">
+                                <div class="about-row"><span>App</span><strong>SmartSpend v1.0</strong></div>
+                                <div class="about-row"><span>Architecture</span><strong>AWS Serverless</strong></div>
+                                <div class="about-row"><span>Project</span><strong>Cloud Computing PBL</strong></div>
+                                <div class="about-row"><span>Year</span><strong>2026</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal glass-card">
+            <div class="modal-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="15" y1="9" x2="9" y2="15" />
+                    <line x1="9" y1="9" x2="15" y2="15" />
+                </svg>
+            </div>
+            <h3>Delete Expense?</h3>
+            <p>This action cannot be undone. The expense will be permanently removed.</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="btn-cancel-delete">Cancel</button>
+                <button class="btn-danger" id="btn-confirm-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Budget Modal -->
+    <div class="modal-overlay" id="budget-modal">
+        <div class="modal glass-card">
+            <div class="modal-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.5">
+                    <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+                    <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+                    <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+                </svg>
+            </div>
+            <h3>Set Monthly Budget</h3>
+            <p>Set a monthly budget to track your spending limits.</p>
+            <div class="input-group" style="margin-top: 16px;">
+                <input type="number" id="budget-input" placeholder="Enter budget amount (₹)" min="100" step="100">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="btn-cancel-budget">Cancel</button>
+                <button class="btn-primary" id="btn-save-budget">Save Budget</button>
+            </div>
+        </div>
+    </div>
+    w
+    <script src="app.js"></script>
+</body>
+
+</html>
